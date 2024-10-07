@@ -1,0 +1,80 @@
+<h2>Lista de Estudiantes del Curso</h2>
+
+<!-- Botón para mostrar/ocultar el formulario -->
+<button class="btn btn-success mb-3" (click)="mostrarFormulario = !mostrarFormulario">
+  {{ mostrarFormulario ? 'Cancelar' : 'Añadir Estudiante' }}
+</button>
+
+<!-- Formulario para añadir un nuevo estudiante -->
+<div *ngIf="mostrarFormulario" class="mb-3">
+  <h3>Añadir nuevo estudiante</h3>
+  <form (ngSubmit)="agregarEstudiante()" #estudianteForm="ngForm">
+    <div class="mb-3">
+      <label for="nombre" class="form-label">Nombre</label>
+      <input type="text" class="form-control" id="nombre" [(ngModel)]="nuevoEstudiante.nombre" name="nombre" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="apellido" class="form-label">Apellido</label>
+      <input type="text" class="form-control" id="apellido" [(ngModel)]="nuevoEstudiante.apellido" name="apellido" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="dni" class="form-label">DNI</label>
+      <input type="text" class="form-control" id="dni" [(ngModel)]="nuevoEstudiante.dni" name="dni" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="telefono" class="form-label">Teléfono</label>
+      <input type="text" class="form-control" id="telefono" [(ngModel)]="nuevoEstudiante.telefono" name="telefono" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="notaMedia" class="form-label">Nota Media</label>
+      <input type="number" class="form-control" id="notaMedia" [(ngModel)]="nuevoEstudiante.notaMedia" name="notaMedia" step="0.01" required>
+    </div>
+
+    <button type="submit" class="btn btn-primary" [disabled]="!estudianteForm.form.valid">Guardar Estudiante</button>
+    <button type="button" class="btn btn-danger" (click)="cancelar()">Cancelar</button>
+  </form>
+</div>
+
+<!-- Tabla de estudiantes -->
+<table class="table table-striped">
+  <thead class="table-dark">
+    <tr>
+      <th>Nombre</th>
+      <th>Apellido</th>
+      <th>DNI</th>
+      <th>Teléfono</th> 
+      <th>Nota media</th>
+      <th>Eliminar</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let estudiante of estudiantes">
+      <td>{{ estudiante.nombre }}</td>
+      <td>{{ estudiante.apellido }}</td>
+      <td>{{ estudiante.dni }}</td>
+      <td>{{ estudiante.telefono }}</td>
+      <td>{{ estudiante.notaMedia }}</td>
+      <td>
+        <button class="btn btn-danger" (click)="eliminarEstudiante(estudiante.id)">Eliminar</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- Mensaje de error -->
+<div *ngIf="errorMessage" class="alert alert-danger">
+  {{ errorMessage }}
+</div>
+
+<!-- Gráfica de Notas Medias -->
+<div>
+  <apx-chart
+    [series]="chartOptions.series"
+    [chart]="chartOptions.chart"
+    [xaxis]="chartOptions.xaxis">
+  </apx-chart>
+</div>

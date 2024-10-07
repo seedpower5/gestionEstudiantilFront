@@ -1,0 +1,70 @@
+<h2>Lista de Cursos</h2>
+
+<!-- Botón para alternar la visibilidad del formulario -->
+<button class="btn btn-success mb-3" (click)="mostrarFormulario = !mostrarFormulario">
+  {{ mostrarFormulario ? 'Cancelar' : 'Añadir Curso' }}
+</button>
+
+<!-- Formulario para añadir un nuevo curso -->
+<div *ngIf="mostrarFormulario" class="mb-3">
+  <h3>Añadir nuevo curso</h3>
+  <form (ngSubmit)="agregarCurso()" #cursoForm="ngForm">
+    <div class="mb-3">
+      <label for="nombreCurso" class="form-label">Nombre del Curso</label>
+      <input type="text" class="form-control" id="nombreCurso" [(ngModel)]="nuevoCurso.nombreCurso" name="nombreCurso" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="duracion" class="form-label">Duración</label>
+      <input type="text" class="form-control" id="duracion" [(ngModel)]="nuevoCurso.duracion" name="duracion" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="profesor" class="form-label">Profesor</label>
+      <input type="text" class="form-control" id="profesor" [(ngModel)]="nuevoCurso.profesor" name="profesor" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="fechaInicio" class="form-label">Fecha de Inicio</label>
+      <input type="date" class="form-control" id="fechaInicio" [(ngModel)]="nuevoCurso.fechaInicio" name="fechaInicio" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="fechaFinal" class="form-label">Fecha Final</label>
+      <input type="date" class="form-control" id="fechaFinal" [(ngModel)]="nuevoCurso.fechaFinal" name="fechaFinal" required>
+    </div>
+
+    <button type="submit" class="btn btn-primary" [disabled]="!cursoForm.form.valid">Guardar Curso</button>
+    <button type="button" class="btn btn-secondary" (click)="cancelar()">Cancelar</button>
+  </form>
+</div>
+
+<!-- Tabla de cursos existentes -->
+<table class="table table-striped">
+  <thead class="table-dark">
+    <tr>
+      <th>Nombre Curso</th>
+      <th>Duración</th>
+      <th>Profesor</th>
+      <th>Fecha Inicio</th>
+      <th>Fecha Final</th>
+      <th>Estudiantes</th>
+      <th>Eliminar</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let curso of cursos">
+      <td>{{ curso.nombreCurso }}</td>
+      <td>{{ curso.duracion }}</td>
+      <td>{{ curso.profesor }}</td>
+      <td>{{ curso.fechaInicio | date:'dd/MM/yyyy' }}</td>
+      <td>{{ curso.fechaFinal | date:'dd/MM/yyyy' }}</td>
+      <td>
+        <button class="btn btn-warning" (click)="irAListadoEstudiantes(curso)">Ver Estudiantes del curso</button>
+      </td>
+      <td>
+        <button class="btn btn-danger" (click)="eliminarCurso(curso.id)">Eliminar</button>
+      </td>
+    </tr>
+  </tbody>
+</table>

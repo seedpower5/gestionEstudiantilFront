@@ -28,6 +28,8 @@
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
-    "strictTemplates": true
+    "strictTemplates": true,
+    "enableTemplateTypeChecker": true, // Habilita la verificación de tipos en plantillas
+    "fullTemplateTypeCheck": true // Asegura una verificación de tipos completa en las plantillas
   }
 }
