@@ -3,13 +3,14 @@ import { Curso } from '../curso';  // Modelo Curso
 import { CursoService } from '../curso.service';  // Servicio Curso
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';  // Asegúrate de importar FormsModule para ngModel y ngForm
+import { FormsModule } from '@angular/forms';  // Para ngModel y ngForm
 import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-listado-cursos',
   standalone: true,
-  imports: [CommonModule, FormsModule],  // Asegúrate de agregar FormsModule aquí
+  providers: [CursoService], // Solo se incluye el servicio
+  imports: [CommonModule, FormsModule],  // Asegúrate de agregar FormsModule
   templateUrl: './listado-cursos.component.html',
   styleUrls: ['./listado-cursos.component.css']
 })
@@ -62,6 +63,17 @@ export class ListadoCursosComponent implements OnInit {
 
   // Agregar un nuevo curso
   agregarCurso() {
+    // Validar que la fecha de inicio no sea posterior a la fecha final
+    if (this.nuevoCurso.fechaInicio && this.nuevoCurso.fechaFinal) {
+      const fechaInicio = new Date(this.nuevoCurso.fechaInicio);
+      const fechaFin = new Date(this.nuevoCurso.fechaFinal);
+
+      if (fechaInicio > fechaFin) {
+        Swal.fire('Error', 'La fecha inicial no puede ser posterior a la fecha final', 'error');
+        return;
+      }
+    }
+
     this.cursoServicio.agregarCurso(this.nuevoCurso).subscribe(
       (curso: Curso) => {
         this.cursos.push(curso);
