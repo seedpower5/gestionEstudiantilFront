@@ -1,0 +1,19 @@
+# Ignorar node_modules
+node_modules
+npm-debug.log
+yarn-error.log
+dist
+
+# Ignorar archivos de configuración
+.angular
+*.log
+*.lock
+
+# Ignorar archivos temporales y de sistema
+.DS_Store
+Thumbs.db
+
+# Ignorar archivos de prueba y configuraciones
+src/**/*.spec.ts
+src/**/*.e2e-spec.ts
+coverage

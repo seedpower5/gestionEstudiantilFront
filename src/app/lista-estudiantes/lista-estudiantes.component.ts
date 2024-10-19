@@ -9,7 +9,6 @@ import Swal from 'sweetalert2';  // Importa SweetAlert2
   selector: 'app-lista-estudiantes',
   standalone: true,
   imports: [CommonModule],
-  providers: [EstudianteService], // Añadido el EstudianteService
   templateUrl: './lista-estudiantes.component.html',
   styleUrls: ['./lista-estudiantes.component.css']
 })
@@ -20,8 +19,9 @@ export class ListaEstudiantesComponent implements OnInit {
   constructor(private route: ActivatedRoute, private estudianteService: EstudianteService) { }
 
   ngOnInit(): void {
-    this.obtenerEstudiantes();
+    this.obtenerEstudiantes();  // Obtener la lista de estudiantes
 
+    // Obtener el nombre del curso de los parámetros de la ruta
     this.route.queryParams.subscribe(params => {
       this.cursoNombre = params['cursoNombre'];
     });
@@ -30,10 +30,11 @@ export class ListaEstudiantesComponent implements OnInit {
   private obtenerEstudiantes(): void {
     this.estudianteService.obtenerTodosLosEstudiantes().subscribe(
       (data: Estudiante[]) => {
-        this.estudiantes = data;
+        this.estudiantes = data;  // Asignar la lista de estudiantes a la variable
       },
       error => {
         console.error('Error al obtener los estudiantes:', error);
+        Swal.fire('Error', 'No se pudo cargar la lista de estudiantes.', 'error');
       }
     );
   }
@@ -54,7 +55,7 @@ export class ListaEstudiantesComponent implements OnInit {
         // Si el usuario confirma, se procede con la eliminación
         this.estudianteService.eliminarEstudiante(id).subscribe(
           () => {
-            this.estudiantes = this.estudiantes.filter(estudiante => estudiante.id !== id);
+            this.estudiantes = this.estudiantes.filter(estudiante => estudiante.id !== id);  // Actualiza la lista de estudiantes
             console.log('Estudiante eliminado con éxito');
             Swal.fire('Eliminado!', 'El estudiante ha sido eliminado.', 'success');
           },

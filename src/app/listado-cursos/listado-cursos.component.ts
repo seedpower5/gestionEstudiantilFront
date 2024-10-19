@@ -9,7 +9,6 @@ import Swal from 'sweetalert2';
 @Component({
   selector: 'app-listado-cursos',
   standalone: true,
-  providers: [CursoService], // Solo se incluye el servicio
   imports: [CommonModule, FormsModule],  // Asegúrate de agregar FormsModule
   templateUrl: './listado-cursos.component.html',
   styleUrls: ['./listado-cursos.component.css']
@@ -19,7 +18,7 @@ export class ListadoCursosComponent implements OnInit {
   mostrarFormulario: boolean = false;  // Controlar visibilidad del formulario
   nuevoCurso: Curso = new Curso();  // Nuevo curso a añadir
 
-  constructor(private cursoServicio: CursoService, private router: Router) { }
+  constructor(private cursoServicio: CursoService, private router: Router) {}
 
   ngOnInit(): void {
     this.obtenerCursos();  // Obtener los cursos al iniciar el componente
@@ -27,19 +26,19 @@ export class ListadoCursosComponent implements OnInit {
 
   // Obtener los cursos desde el servicio
   private obtenerCursos() {
-    this.cursoServicio.obtenerTodosLosCursos().subscribe(
-      dato => {
+    this.cursoServicio.obtenerTodosLosCursos().subscribe({
+      next: (dato: Curso[]) => {
         this.cursos = dato;
       },
-      error => {
-        console.error('Error al obtener los cursos', error);
+      error: (error) => {
+        console.error('Error al obtener los cursos:', error);
         Swal.fire('Error', 'No se pudo cargar la lista de cursos.', 'error');
       }
-    );
+    });
   }
 
   // Eliminar un curso
-  eliminarCurso(id: number) {
+  eliminarCurso(id: number): void {
     Swal.fire({
       title: '¿Estás seguro?',
       text: 'No podrás revertir esta acción',
@@ -51,18 +50,22 @@ export class ListadoCursosComponent implements OnInit {
       cancelButtonText: 'No, cancelar'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.cursoServicio.eliminarCurso(id).subscribe(() => {
-          this.cursos = this.cursos.filter(curso => curso.id !== id);
-          Swal.fire('Eliminado', 'El curso ha sido eliminado correctamente.', 'success');
+        this.cursoServicio.eliminarCurso(id).subscribe({
+          next: () => {
+            this.cursos = this.cursos.filter(curso => curso.id !== id);
+            Swal.fire('Eliminado', 'El curso ha sido eliminado correctamente.', 'success');
+          },
+          error: (error) => {
+            console.error('Error al eliminar el curso:', error);
+            Swal.fire('Error', 'Ocurrió un error al eliminar el curso.', 'error');
+          }
         });
-      } else if (result.dismiss === Swal.DismissReason.cancel) {
-        Swal.fire('Cancelado', 'La eliminación ha sido cancelada', 'error');
       }
     });
   }
 
   // Agregar un nuevo curso
-  agregarCurso() {
+  agregarCurso(): void {
     // Validar que la fecha de inicio no sea posterior a la fecha final
     if (this.nuevoCurso.fechaInicio && this.nuevoCurso.fechaFinal) {
       const fechaInicio = new Date(this.nuevoCurso.fechaInicio);
@@ -74,27 +77,27 @@ export class ListadoCursosComponent implements OnInit {
       }
     }
 
-    this.cursoServicio.agregarCurso(this.nuevoCurso).subscribe(
-      (curso: Curso) => {
+    this.cursoServicio.agregarCurso(this.nuevoCurso).subscribe({
+      next: (curso: Curso) => {
         this.cursos.push(curso);
         Swal.fire('Guardado', 'El curso ha sido añadido correctamente.', 'success');
         this.cancelar();
       },
-      error => {
-        console.error('Error al añadir el curso', error);
+      error: (error) => {
+        console.error('Error al añadir el curso:', error);
         Swal.fire('Error', 'Ocurrió un error al añadir el curso.', 'error');
       }
-    );
+    });
   }
 
   // Cancelar el formulario y limpiar
-  cancelar() {
+  cancelar(): void {
     this.mostrarFormulario = false;
     this.nuevoCurso = new Curso();  // Limpiar formulario
   }
 
   // Navegar al listado de estudiantes
-  irAListadoEstudiantes(curso: Curso) {
+  irAListadoEstudiantes(curso: Curso): void {
     this.router.navigate(['/estudiantes-curso', curso.id]);  // Navegar a estudiantes
   }
 }

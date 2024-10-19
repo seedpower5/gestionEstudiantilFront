@@ -18,7 +18,6 @@ export interface ChartOptions {
   selector: 'app-lista-estudiantes-curso',
   standalone: true,
   imports: [CommonModule, FormsModule, ChartComponent],
-  providers: [EstudianteService], // Añadido el EstudianteService
   templateUrl: './lista-estudiantes-curso.component.html',
   styleUrls: ['./lista-estudiantes-curso.component.css']
 })
@@ -51,6 +50,7 @@ export class ListaEstudiantesCursoComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Obtener el ID del curso desde la URL
     this.cursoId = Number(this.route.snapshot.paramMap.get('cursoId'));
     console.log('ID del curso actual:', this.cursoId);
 
@@ -65,7 +65,7 @@ export class ListaEstudiantesCursoComponent implements OnInit {
     this.estudianteService.obtenerEstudiantesPorCursoId(cursoId).subscribe({
       next: (estudiantes: Estudiante[]) => {
         this.estudiantes = estudiantes;
-        this.actualizarGrafica();
+        this.actualizarGrafica();  // Actualizar la gráfica después de cargar los estudiantes
       },
       error: (error) => {
         this.errorMessage = 'Error al cargar los estudiantes';
@@ -78,6 +78,7 @@ export class ListaEstudiantesCursoComponent implements OnInit {
     const nombres = this.estudiantes.map(est => `${est.nombre} ${est.apellido}`);
     const notas = this.estudiantes.map(est => est.notaMedia);
 
+    // Actualiza la gráfica con los nombres y las notas
     this.chartOptions.xaxis.categories = nombres;
     this.chartOptions.series[0].data = notas;
   }
@@ -119,6 +120,7 @@ export class ListaEstudiantesCursoComponent implements OnInit {
       return;
     }
 
+    // Preparar el nuevo estudiante con el curso asociado
     const nuevoEstudiante: Estudiante = {
       nombre: this.nuevoEstudiante.nombre,
       apellido: this.nuevoEstudiante.apellido,
@@ -130,10 +132,9 @@ export class ListaEstudiantesCursoComponent implements OnInit {
 
     this.estudianteService.agregarEstudiante(nuevoEstudiante).subscribe({
       next: (estudiante: Estudiante) => {
-        this.estudiantes.push(estudiante);
-        console.log('Estudiante añadido correctamente');
-        this.cancelar();
-        this.actualizarGrafica();
+        this.estudiantes.push(estudiante);  // Añadir el nuevo estudiante a la lista
+        this.cancelar();  // Limpiar el formulario y ocultarlo
+        this.actualizarGrafica();  // Actualizar la gráfica con los nuevos datos
         Swal.fire('Éxito', 'Estudiante creado correctamente', 'success');
       },
       error: (error) => {
@@ -158,8 +159,8 @@ export class ListaEstudiantesCursoComponent implements OnInit {
       if (result.isConfirmed) {
         this.estudianteService.eliminarEstudiante(id).subscribe(
           () => {
-            this.estudiantes = this.estudiantes.filter(estudiante => estudiante.id !== id);
-            this.actualizarGrafica();
+            this.estudiantes = this.estudiantes.filter(estudiante => estudiante.id !== id);  // Actualizar la lista
+            this.actualizarGrafica();  // Actualizar la gráfica
             Swal.fire('Eliminado!', 'El estudiante ha sido eliminado.', 'success');
           },
           error => {
@@ -172,6 +173,6 @@ export class ListaEstudiantesCursoComponent implements OnInit {
 
   cancelar(): void {
     this.mostrarFormulario = false;
-    this.nuevoEstudiante = new Estudiante();
+    this.nuevoEstudiante = new Estudiante();  // Limpiar el formulario
   }
 }
